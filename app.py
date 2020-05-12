@@ -69,7 +69,7 @@ class Venue(db.Model):
     city = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
-    genres = db.Column(db.Enum(Genres), default=Genres.pop, nullable=False)
+    genres = db.Column(db.ARRAY(db.String), default=[Genres.pop], nullable=False)
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
     seeking_description = db.Column(db.String(500), nullable=True)
@@ -86,7 +86,7 @@ class Artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
-    genres = db.Column(db.Enum(Genres), default=Genres.pop, nullable=False)
+    genres = db.Column(db.ARRAY(db.String), default=[Genres.pop], nullable=False)
     image_link = db.Column(db.String(500))
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
@@ -122,7 +122,7 @@ def addVenueData():
         venue.address = defaultVenue['address']
         venue.city = defaultVenue['city']
         venue.facebook_link = defaultVenue['facebook_link']
-        # venue.genres = defaultVenue['genres']
+        venue.genres = defaultVenue['genres']
         venue.image_link = defaultVenue['image_link']
         venue.name = defaultVenue['name']
         venue.phone = defaultVenue['phone']
@@ -141,7 +141,7 @@ def addArtistData():
       artist = Artist()
       artist.city = defaultArtist['city']
       artist.facebook_link = defaultArtist['facebook_link']
-      # artist.genres = defaultArtist['genres']
+      artist.genres = defaultArtist['genres']
       artist.image_link = defaultArtist['image_link']
       artist.name = defaultArtist['name']
       artist.phone = defaultArtist['phone']

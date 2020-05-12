@@ -9,7 +9,7 @@ artist.name }} | Artist{% endblock %} {% block content %}
       ID: {{ artist.id }}
     </p>
     <div class="genres">
-      {% for genre in ['Punk', 'Instrumental'] %}
+      {% for genre in artist.genres %}
       <span class="genre">{{ genre }}</span>
       {% endfor %}
     </div>

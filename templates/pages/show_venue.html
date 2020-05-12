@@ -9,8 +9,7 @@ block content %}
       ID: {{ venue.id }}
     </p>
     <div class="genres">
-      <!-- this should read from venue.genres -->
-      {% for genre in ['Hip Hop', 'Rock n Roll'] %}
+      {% for genre in venue.genres %}
       <span class="genre">{{ genre }}</span>
       {% endfor %}
     </div>
