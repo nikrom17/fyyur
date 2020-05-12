@@ -5,6 +5,7 @@
 import json
 import dateutil.parser
 import babel
+from config import SQLALCHEMY_DATABASE_URI
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_migrate import Migrate # import to run flask db <command>
 from flask_moment import Moment
@@ -23,23 +24,30 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# TODO: connect to a local postgresql database
-
+# connect to a local postgresql database
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
+
+# TODO: update nullable properties on all columns
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
     address = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
+    city = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
+    image_link = db.Column(db.String(500))
+    genres = db.Column(db.String(120))
+    name = db.Column(db.String)
+    phone = db.Column(db.String(120))
+    seeking_description = db.Column(db.String(500), nullable=True)
+    seeking_talent = db.Column(db.Boolean, default=False)
+    state = db.Column(db.String(120))
+    website = db.Column(db.String(120))
+    # shows = db.Column(db.Integer, 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -58,6 +66,16 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
+class Show(db.Model):
+    __tablename__ = 'Show'
+
+    id = db.Column(db.Integer, primary_key=True)
+    venue = db.Column(db.Integer, db.ForeignKey(''))
+    artist = db.Column(db.String(120))
+    start_time = db.Column(db.String(120))
+
+    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 #----------------------------------------------------------------------------#
 # Filters.
