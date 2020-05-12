@@ -2,6 +2,7 @@
 # Imports
 #----------------------------------------------------------------------------#
 
+from enum import Enum
 import json
 import dateutil.parser
 import babel
@@ -14,6 +15,8 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from defaultData import artists_default_data, venues_default_data
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -26,6 +29,32 @@ migrate = Migrate(app, db)
 
 # connect to a local postgresql database
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+
+#----------------------------------------------------------------------------#
+# Enums
+#----------------------------------------------------------------------------#
+
+class Genres(Enum):
+  alternative = 'Alternative',
+  blues = 'Blues',
+  classical = 'Classical',
+  country = 'Country',
+  electronic = 'Electronic',
+  folk = 'Folk',
+  funk = 'Funk',
+  hip_hop = 'Hip-Hop',
+  heavy_metal = 'Heavy Metal',
+  instrumental = 'Instrumental',
+  jazz = 'Jazz',
+  musical_theatre = 'Musical Theatre',
+  pop = 'Pop',
+  punk = 'Punk',
+  r_n_b = 'R&B',
+  reggae = 'Reggae',
+  rock_n_roll = 'Rock n Roll',
+  soul = 'Soul',
+  other = 'Other',
+  
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
@@ -40,7 +69,7 @@ class Venue(db.Model):
     city = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
-    genres = db.Column(db.String(120))
+    genres = db.Column(db.Enum(Genres), default=Genres.pop, nullable=False)
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
     seeking_description = db.Column(db.String(500), nullable=True)
@@ -59,7 +88,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    genres = db.Column(db.Enum(Genres), default=Genres.pop, nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
@@ -78,26 +107,16 @@ class Show(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 
-class Genres(Enum):
-  Alternative = 'Alternative',
-  Blues = 'Blues',
-  Classical = 'Classical',
-  Country = 'Country',
-  Electronic = 'Electronic',
-  Folk = 'Folk',
-  Funk = 'Funk',
-  Hip_Hop = 'Hip-Hop',
-  Heavy_Metal = 'Heavy Metal',
-  Instrumental = 'Instrumental',
-  Jazz = 'Jazz',
-  Musical_Theatre = 'Musical Theatre',
-  Pop = 'Pop',
-  Punk = 'Punk',
-  R_n_B = 'R&B',
-  Reggae = 'Reggae',
-  Rock_n_Roll = 'Rock n Roll',
-  Soul = 'Soul',
-  Other = 'Other',
+#----------------------------------------------------------------------------#
+# Load default data.
+#----------------------------------------------------------------------------#
+def addVenueData():
+    for venue in venues_default_data:
+        print (venue)
+        
+def addArtistData():
+    for artist in artists_default_data:
+        print (artist)
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -118,6 +137,8 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
+  addVenueData()
+  addArtistData()
   return render_template('pages/home.html')
 
 
