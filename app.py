@@ -62,7 +62,7 @@ class Genres(Enum):
 # TODO: update nullable properties on all columns
 
 class Venue(db.Model):
-    __tablename__ = 'Venue'
+    __tablename__ = 'venues'
 
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(120))
@@ -81,42 +81,76 @@ class Venue(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = 'artists'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
     city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
+    facebook_link = db.Column(db.String(120))
     genres = db.Column(db.Enum(Genres), default=Genres.pop, nullable=False)
     image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
+    name = db.Column(db.String)
+    phone = db.Column(db.String(120))
+    seeking_description = db.Column(db.String(500), nullable=True)
+    seeking_venue = db.Column(db.Boolean, default=False)
+    state = db.Column(db.String(120))
+    website = db.Column(db.String(120))
+    
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
-class Show(db.Model):
-    __tablename__ = 'Show'
+# class Show(db.Model):
+#     __tablename__ = 'shows'
 
-    id = db.Column(db.Integer, primary_key=True)
-    venue = db.Column(db.Integer, db.ForeignKey(''))
-    artist = db.Column(db.String(120))
-    start_time = db.Column(db.String(120))
+#     id = db.Column(db.Integer, primary_key=True)
+#     venue = db.Column(db.Integer, db.ForeignKey(''))
+#     artist = db.Column(db.String(120))
+#     start_time = db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
-
+db.create_all()
 #----------------------------------------------------------------------------#
 # Load default data.
 #----------------------------------------------------------------------------#
 def addVenueData():
-    for venue in venues_default_data:
-        print (venue)
+  venues = Venue.query.all()
+  if (not len(venues)):
+    for defaultVenue in venues_default_data:
+        venue = Venue()
+        venue.address = defaultVenue['address']
+        venue.city = defaultVenue['city']
+        venue.facebook_link = defaultVenue['facebook_link']
+        # venue.genres = defaultVenue['genres']
+        venue.image_link = defaultVenue['image_link']
+        venue.name = defaultVenue['name']
+        venue.phone = defaultVenue['phone']
+        venue.seeking_description = defaultVenue['seeking_description']
+        venue.seeking_talent = defaultVenue['seeking_talent']
+        venue.state = defaultVenue['state']
+        venue.website = defaultVenue['website']
+        db.session.add(venue)
+    db.session.commit()
+        
         
 def addArtistData():
-    for artist in artists_default_data:
-        print (artist)
+  artists = Artist.query.all()
+  if (not len(artists)):
+    for defaultArtist in artists_default_data:
+      artist = Artist()
+      artist.city = defaultArtist['city']
+      artist.facebook_link = defaultArtist['facebook_link']
+      # artist.genres = defaultArtist['genres']
+      artist.image_link = defaultArtist['image_link']
+      artist.name = defaultArtist['name']
+      artist.phone = defaultArtist['phone']
+      artist.seeking_description = defaultArtist['seeking_description']
+      artist.seeking_venue = defaultArtist['seeking_venue']
+      artist.state= defaultArtist['state']
+      artist.website = defaultArtist['website']
+      db.session.add(artist)
+    db.session.commit()
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -268,8 +302,12 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=data)
+  # data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
+  data = Venue.query.get(venue_id)
+  if data:
+    return render_template('pages/show_venue.html', venue=data)
+  else:
+    return render_template('errors/404.html')
 
 #  Create Venue
 #  ----------------------------------------------------------------
