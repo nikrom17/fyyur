@@ -59,8 +59,6 @@ class Genres(Enum):
 # Models.
 #----------------------------------------------------------------------------#
 
-# TODO: update nullable properties on all columns
-
 class Venue(db.Model):
     __tablename__ = 'venues'
 
@@ -69,11 +67,11 @@ class Venue(db.Model):
     city = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
-    genres = db.Column(db.ARRAY(db.String), default=[Genres.pop], nullable=False)
+    genres = db.Column(db.ARRAY(db.String), default=[Genres.pop])
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
     seeking_description = db.Column(db.String(500), nullable=True)
-    seeking_talent = db.Column(db.Boolean, default=False)
+    seeking_talent = db.Column(db.Boolean)
     state = db.Column(db.String(120))
     website = db.Column(db.String(500))
     # shows = db.Column(db.Integer, 
@@ -86,12 +84,12 @@ class Artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
-    genres = db.Column(db.ARRAY(db.String), default=[Genres.pop], nullable=False)
+    genres = db.Column(db.ARRAY(db.String), default=[Genres.pop])
     image_link = db.Column(db.String(500))
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
     seeking_description = db.Column(db.String(500), nullable=True)
-    seeking_venue = db.Column(db.Boolean, default=False)
+    seeking_venue = db.Column(db.Boolean)
     state = db.Column(db.String(120))
     website = db.Column(db.String(500))
     
@@ -111,9 +109,11 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 db.create_all()
+
 #----------------------------------------------------------------------------#
 # Load default data.
 #----------------------------------------------------------------------------#
+
 def addVenueData():
   venues = Venue.query.all()
   if (not len(venues)):
@@ -151,6 +151,7 @@ def addArtistData():
       artist.website = defaultArtist['website']
       db.session.add(artist)
     db.session.commit()
+    
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
