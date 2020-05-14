@@ -197,8 +197,6 @@ def index():
 def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
-    query = Venue.query.all()
-    print(query)
     data = [{
         "city": "San Francisco",
         "state": "CA",
@@ -220,7 +218,8 @@ def venues():
             "num_upcoming_shows": 0,
         }]
     }]
-    return render_template('pages/venues.html', areas=data)
+    venues = Venue.query.all()
+    return render_template('pages/venues.html', areas=venues)
 
 
 @app.route('/venues/search', methods=['POST'])
@@ -236,7 +235,12 @@ def search_venues():
             "num_upcoming_shows": 0,
         }]
     }
-    return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    search_value = request.form.get('search_term', '')
+    search_term = "%{}%".format(search_value)
+    print(search_term)
+    venues = Venue.query.filter(Venuee.name.like(search_term)).all()
+    print(venues)
+    return render_template('pages/search_venues.html', results=venues, search_term=search_value)
 
 
 @app.route('/venues/<int:venue_id>')
@@ -320,7 +324,6 @@ def show_venue(venue_id):
         "past_shows_count": 1,
         "upcoming_shows_count": 1,
     }
-    # data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
     data = Venue.query.get(venue_id)
     if data:
         return render_template('pages/show_venue.html', venue=data)
@@ -339,8 +342,6 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    # TODO: insert form data as a new Venue record in the db, instead
-    # TODO: modify data to be the data object returned from db insertion
     error = False
     try:
         venue = Venue()
@@ -393,18 +394,8 @@ def delete_venue(venue_id):
 
 @app.route('/artists')
 def artists():
-    # TODO: replace with real data returned from querying the database
-    data = [{
-        "id": 4,
-        "name": "Guns N Petals",
-    }, {
-        "id": 5,
-        "name": "Matt Quevedo",
-    }, {
-        "id": 6,
-        "name": "The Wild Sax Band",
-    }]
-    return render_template('pages/artists.html', artists=data)
+    artists = Artist.query.all()
+    return render_template('pages/artists.html', artists=artists)
 
 
 @app.route('/artists/search', methods=['POST'])
@@ -420,7 +411,12 @@ def search_artists():
             "num_upcoming_shows": 0,
         }]
     }
-    return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+    search_value = request.form.get('search_term', '')
+    search_term = "%{}%".format(search_value)
+    print(search_term)
+    artists = Artist.query.filter(Artist.name.like(search_term)).all()
+    print(artists)
+    return render_template('pages/search_artists.html', results=artists, search_term=search_value)
 
 
 @app.route('/artists/<int:artist_id>')
