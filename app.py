@@ -126,6 +126,7 @@ db.create_all()
 
 def addVenueData():
     venues = Venue.query.all()
+    # only load data if db is empty
     if (not len(venues)):
         for defaultVenue in venues_default_data:
             venue = Venue()
@@ -146,6 +147,7 @@ def addVenueData():
 
 def addArtistData():
     artists = Artist.query.all()
+    # only load data if db is empty
     if (not len(artists)):
         for defaultArtist in artists_default_data:
             artist = Artist()
@@ -195,29 +197,27 @@ def index():
 
 @app.route('/venues')
 def venues():
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
-    data = [{
-        "city": "San Francisco",
-        "state": "CA",
-        "venues": [{
-            "id": 1,
-            "name": "The Musical Hop",
-            "num_upcoming_shows": 0,
-        }, {
-            "id": 3,
-            "name": "Park Square Live Music & Coffee",
-            "num_upcoming_shows": 1,
-        }]
-    }, {
-        "city": "New York",
-        "state": "NY",
-        "venues": [{
-            "id": 2,
-            "name": "The Dueling Pianos Bar",
-            "num_upcoming_shows": 0,
-        }]
-    }]
+    # data = [{
+    #     "city": "San Francisco",
+    #     "state": "CA",
+    #     "venues": [{
+    #         "id": 1,
+    #         "name": "The Musical Hop",
+    #         "num_upcoming_shows": 0,
+    #     }, {
+    #         "id": 3,
+    #         "name": "Park Square Live Music & Coffee",
+    #         "num_upcoming_shows": 1,
+    #     }]
+    # }, {
+    #     "city": "New York",
+    #     "state": "NY",
+    #     "venues": [{
+    #         "id": 2,
+    #         "name": "The Dueling Pianos Bar",
+    #         "num_upcoming_shows": 0,
+    #     }]
+    # }]
     locations = db.session.query(
         Venue.city, Venue.state).group_by(Venue.city, Venue.state).all()
     venues = []
