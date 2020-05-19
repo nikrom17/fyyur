@@ -601,7 +601,6 @@ def create_artist_submission():
         db.session.add(artist)
         db.session.commit()
     except(error):
-        print(error)
         error = True
         db.session.rollback()
     finally:
