@@ -16,8 +16,9 @@ block content %}
           true, value = artist.city) }}
         </div>
         <div class="form-group">
+          {{ form.state.process_data(artist.state)}}
           {{ form.state(class_ = 'form-control', placeholder='State', autofocus
-          = true, value = 'IL')}} {{ form.state.data = artist.state }}
+          = true, value = 'IL')}}
         </div>
       </div>
     </div>

@@ -519,20 +519,23 @@ def show_artist(artist_id):
 @ app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
     form = ArtistForm()
-    artist = {
-        "id": 4,
-        "name": "Guns N Petals",
-        "genres": ["Rock n Roll"],
-        "city": "San Francisco",
-        "state": "CA",
-        "phone": "326-123-5000",
-        "website": "https://www.gunsnpetalsband.com",
-        "facebook_link": "https://www.facebook.com/GunsNPetals",
-        "seeking_venue": True,
-        "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-        "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-    }
+    # artist = {
+    #     "id": 4,
+    #     "name": "Guns N Petals",
+    #     "genres": ["Rock n Roll"],
+    #     "city": "San Francisco",
+    #     "state": "CA",
+    #     "phone": "326-123-5000",
+    #     "website": "https://www.gunsnpetalsband.com",
+    #     "facebook_link": "https://www.facebook.com/GunsNPetals",
+    #     "seeking_venue": True,
+    #     "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+    #     "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+    # }
     # TODO: populate form with fields from artist with ID <artist_id>
+    artist = Artist.query.get(artist_id)
+    print(artist.genres)
+    form.genres.data = artist.genres
     return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 
@@ -540,6 +543,31 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
     # TODO: take values from the form submitted, and update existing
     # artist record with ID <artist_id> using the new attributes
+    # called upon submitting the new artist listing form
+    error = False
+    try:
+        artist = Artist.query.get(artist_id)
+        submission = request.form
+        artist.city = submission['city']
+        artist.facebook_link = submission['facebook_link']
+        artist.genres = submission.getlist('genres')
+        artist.name = submission['name']
+        artist.phone = submission['phone']
+        artist.state = submission['state']
+        db.session.add(artist)
+        db.session.commit()
+    except(error):
+        error = True
+        db.session.rollback()
+    finally:
+        db.session.close()
+    if not error:
+        # on successful db insert, flash success
+        flash('Artist ' + request.form['name'] + ' was successfully updated!')
+    else:
+        # on unsuccessful db insert, flash an error instead.
+        flash('An error occurred. Artist ' +
+              request.form['name'] + ' could not be listed.')
 
     return redirect(url_for('show_artist', artist_id=artist_id))
 
