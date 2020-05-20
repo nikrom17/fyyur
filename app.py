@@ -433,7 +433,7 @@ def search_artists():
     for artist in artists:
         data.append({'id': artist.id, 'name': artist.name,
                      'num_upcoming_shows': 1})  # TODO pull this data
-    response = {"count": len(venues), "data": data}
+    response = {"count": len(artists), "data": data}
 
     return render_template('pages/search_artists.html', results=artists, search_term=search_value)
 
