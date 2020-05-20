@@ -77,7 +77,9 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean)
     state = db.Column(db.String(120))
     website = db.Column(db.String(500))
-    # shows = db.Column(db.Integer,
+    num_upcoming_shows = db.Column(db.Integer)
+    num_past_shows = db.Column(db.Integer)
+    shows = db.relationship('Show', backref='venues')
 
     def __repr__(self):
         return f'< Venue {self.name} {self.id} {self.city} >'
@@ -99,6 +101,9 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean)
     state = db.Column(db.String(120))
     website = db.Column(db.String(500))
+    upcoming_shows_count = db.Column(db.Integer)
+    past_shows_count = db.Column(db.Integer)
+    shows = db.relationship('Show', backref='artists')
 
     def __repr__(self):
         return f'< Artist {self.name} {self.id} >'
@@ -107,13 +112,14 @@ class Artist(db.Model):
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
-# class Show(db.Model):
-#     __tablename__ = 'shows'
 
-#     id = db.Column(db.Integer, primary_key=True)
-#     venue = db.Column(db.Integer, db.ForeignKey(''))
-#     artist = db.Column(db.String(120))
-#     start_time = db.Column(db.String(120))
+class Show(db.Model):
+    __tablename__ = 'shows'
+
+    id = db.Column(db.Integer, primary_key=True)
+    venue = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
+    artist = db.Column(db.ForeignKey('artists.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -628,8 +634,6 @@ def edit_venue_submission(venue_id):
         flash('Venue ' + request.form['name'] + ' was successfully updated!')
     else:
         print('error')
-        # TODO this is not failing gracefully
-        # on unsuccessful db insert, flash an error instead.
         flash('An error occurred. Venue ' +
               request.form['name'] + ' could not be updated.')
     return redirect(url_for('show_venue', venue_id=venue_id))
