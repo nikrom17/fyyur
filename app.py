@@ -435,7 +435,7 @@ def search_artists():
                      'num_upcoming_shows': 1})  # TODO pull this data
     response = {"count": len(artists), "data": data}
 
-    return render_template('pages/search_artists.html', results=artists, search_term=search_value)
+    return render_template('pages/search_artists.html', results=response, search_term=search_value)
 
 
 @ app.route('/artists/<int:artist_id>')
