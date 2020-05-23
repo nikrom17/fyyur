@@ -16,7 +16,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
-from defaultData import artists_default_data, venues_default_data
+from defaultData import artists_default_data, shows_default_data, venues_default_data
 
 # ---------------------------------------------------------------------------- #
 # App Config.
@@ -171,6 +171,18 @@ def addArtistData():
             db.session.add(artist)
         db.session.commit()
 
+
+def addShowsData():
+    shows = Show.query.all()
+    if (not len(shows)):
+        for defaultShow in shows_default_data:
+            show = Show()
+            show.venue = defaultShow['venue_id']
+            show.artist = defaultShow['artist_id']
+            show.start_time = defaultShow['start_time']
+            db.session.add(show)
+        db.session.commit()
+
 # ---------------------------------------------------------------------------- #
 # Filters.
 # ---------------------------------------------------------------------------- #
@@ -196,6 +208,7 @@ app.jinja_env.filters['datetime'] = format_datetime
 def index():
     addVenueData()
     addArtistData()
+    addShowsData()
     return render_template('pages/home.html')
 
 
