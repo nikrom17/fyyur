@@ -23,8 +23,8 @@ venues_default_data = [{
     # "upcoming_shows": [],
     # "past_shows_count": 1,
     # "upcoming_shows_count": 0,
-  },
-{
+},
+    {
     "address": "335 Delancey Street",
     "city": "New York",
     "facebook_link": "https://www.facebook.com/theduelingpianos",
@@ -41,7 +41,7 @@ venues_default_data = [{
     "upcoming_shows_count": 0,
     "website": "https://www.theduelingpianos.com",
 },
-{
+    {
     "address": "34 Whiskey Moore Ave",
     "city": "San Francisco",
     "facebook_link": "https://www.facebook.com/ParkSquareLiveMusicAndCoffee",
@@ -99,7 +99,7 @@ artists_default_data = [{
     # "upcoming_shows": [],
     # "past_shows_count": 1,
     # "upcoming_shows_count": 0,
-    },
+},
     {
     "city": "New York",
     "facebook_link": "https://www.facebook.com/mattquevedo923251523",
@@ -120,7 +120,7 @@ artists_default_data = [{
     # "upcoming_shows": [],
     # "past_shows_count": 1,
     # "upcoming_shows_count": 0,
-    },
+},
     {
     "city": "San Francisco",
     "genres": ["Jazz", "Classical"],
@@ -153,3 +153,24 @@ artists_default_data = [{
     # "upcoming_shows_count": 3,
 }]
 
+shows_default_data = [{
+    "venue_id": 1,
+    "artist_id": 4,
+    "start_time": "2019-05-21T21:30:00.000Z"
+}, {
+    "venue_id": 3,
+    "artist_id": 5,
+    "start_time": "2019-06-15T23:00:00.000Z"
+}, {
+    "venue_id": 3,
+    "artist_id": 6,
+    "start_time": "2035-04-01T20:00:00.000Z"
+}, {
+    "venue_id": 3,
+    "artist_id": 6,
+    "start_time": "2035-04-08T20:00:00.000Z"
+}, {
+    "venue_id": 3,
+    "artist_id": 6,
+    "start_time": "2035-04-15T20:00:00.000Z"
+}]
