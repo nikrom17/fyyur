@@ -388,20 +388,15 @@ def create_venue_submission():
         venue.website = submission['website']
         db.session.add(venue)
         db.session.commit()
-        print('end of try')
-    except():
-        print('except')
+    except(error):
         error = True
         db.session.rollback()
     finally:
-        print('finally')
         db.session.close()
     if not error:
         # on successful db insert, flash success
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
     else:
-        print('error')
-        # TODO this is not failing gracefully
         # on unsuccessful db insert, flash an error instead.
         flash('An error occurred. Venue ' +
               request.form['name'] + ' could not be listed.')
@@ -636,7 +631,7 @@ def edit_venue_submission(venue_id):
         venue.state = submission['state']
         db.session.add(venue)
         db.session.commit()
-    except():
+    except:
         error = True
         db.session.rollback()
     finally:
@@ -752,12 +747,26 @@ def create_shows():
 def create_show_submission():
     # called to create new shows in the db, upon submitting new show listing form
     # TODO: insert form data as a new Show record in the db, instead
+    error = False
+    submission = request.form
+    try:
+        show = Show()
+        show.venue = submission['venue_id']
+        show.artist = submission['artist_id']
+        show.start_time = submission['start_time']
+        db.session.add(show)
+        db.session.commit()
+    except:
+        error = True
+        db.session.rollback()
+    finally:
+        db.session.close()
 
-    # on successful db insert, flash success
-    flash('Show was successfully listed!')
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Show could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    if not error:
+        # on successful db insert, flash success
+        flash('Show was successfully listed!')
+    else:
+        flash('An error occurred. Show could not be listed.')
     return render_template('pages/home.html')
 
 
