@@ -155,22 +155,22 @@ artists_default_data = [{
 
 shows_default_data = [{
     "venue_id": 1,
-    "artist_id": 4,
+    "artist_id": 1,
     "start_time": "2019-05-21T21:30:00.000Z"
 }, {
-    "venue_id": 3,
-    "artist_id": 5,
+    "venue_id": 2,
+    "artist_id": 2,
     "start_time": "2019-06-15T23:00:00.000Z"
 }, {
     "venue_id": 3,
-    "artist_id": 6,
+    "artist_id": 3,
     "start_time": "2035-04-01T20:00:00.000Z"
 }, {
-    "venue_id": 3,
-    "artist_id": 6,
+    "venue_id": 1,
+    "artist_id": 2,
     "start_time": "2035-04-08T20:00:00.000Z"
 }, {
-    "venue_id": 3,
-    "artist_id": 6,
+    "venue_id": 2,
+    "artist_id": 3,
     "start_time": "2035-04-15T20:00:00.000Z"
 }]

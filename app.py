@@ -63,7 +63,7 @@ class Genres(Enum):
 
 
 class Venue(db.Model):
-    __tablename__ = 'venues'
+    __tablename__ = 'venue'
 
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(120))
@@ -88,7 +88,7 @@ class Venue(db.Model):
 
 
 class Artist(db.Model):
-    __tablename__ = 'artists'
+    __tablename__ = 'artist'
 
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(120))
@@ -103,7 +103,7 @@ class Artist(db.Model):
     website = db.Column(db.String(500))
     upcoming_shows_count = db.Column(db.Integer)
     past_shows_count = db.Column(db.Integer)
-    shows = db.relationship('Show', backref='artists')
+    shows = db.relationship('Show', backref='artist')
 
     def __repr__(self):
         return f'< Artist name: {self.name} id: {self.id} >'
@@ -114,15 +114,16 @@ class Artist(db.Model):
 
 
 class Show(db.Model):
-    __tablename__ = 'shows'
+    __tablename__ = 'show'
 
     id = db.Column(db.Integer, primary_key=True)
-    venue = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable=False)
-    artist = db.Column(db.ForeignKey('artists.id'), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey(
+        'venue.id'), nullable=False)
+    artist_id = db.Column(db.ForeignKey('artist.id'), nullable=False)
+    start_time = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return f'< Show id: {self.id} venue: {self.venue} artist: {self.artist} >'
+        return f'< Show id: {self.id} venue: {self.venue_id} artist: {self.artist_id} time: {self.start_time} >'
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 
@@ -179,8 +180,8 @@ def addShowsData():
     if (not len(shows)):
         for defaultShow in shows_default_data:
             show = Show()
-            show.venue = defaultShow['venue_id']
-            show.artist = defaultShow['artist_id']
+            show.venue_id = defaultShow['venue_id']
+            show.artist_id = defaultShow['artist_id']
             show.start_time = defaultShow['start_time']
             db.session.add(show)
         db.session.commit()
@@ -735,11 +736,19 @@ def shows():
         "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
         "start_time": "2035-04-15T20:00:00.000Z"
     }]
-    shows = Show.query.all()
-    print(shows)
+    result = []
+    shows = Show.query.join(Venue, Show.venue_id == Venue.id).join(
+        Artist, Artist.id == Show.artist_id).all()
     for show in shows:
-        print(show)
-    return render_template('pages/shows.html', shows=data)
+        showResult = {"venue_id": show.venue_id,
+                      "venue_name": show.venue.name,
+                      "artist_id": show.artist_id,
+                      "artist_name": show.artist.name,
+                      "artist_image_link": show.artist.image_link,
+                      "start_time": show.start_time
+                      }
+        result.append(showResult)
+    return render_template('pages/shows.html', shows=shows)
 
 
 @ app.route('/shows/create')
