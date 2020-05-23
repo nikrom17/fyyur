@@ -82,7 +82,7 @@ class Venue(db.Model):
     shows = db.relationship('Show', backref='venues')
 
     def __repr__(self):
-        return f'< Venue {self.name} {self.id} {self.city} >'
+        return f'< Venue name: {self.name} id: {self.id} city: {self.city} >'
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -106,7 +106,7 @@ class Artist(db.Model):
     shows = db.relationship('Show', backref='artists')
 
     def __repr__(self):
-        return f'< Artist {self.name} {self.id} >'
+        return f'< Artist name: {self.name} id: {self.id} >'
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -121,6 +121,8 @@ class Show(db.Model):
     artist = db.Column(db.ForeignKey('artists.id'), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
 
+    def __repr__(self):
+        return f'< Show id: {self.id} venue: {self.venue} artist: {self.artist} >'
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 
@@ -733,6 +735,10 @@ def shows():
         "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
         "start_time": "2035-04-15T20:00:00.000Z"
     }]
+    shows = Show.query.all()
+    print(shows)
+    for show in shows:
+        print(show)
     return render_template('pages/shows.html', shows=data)
 
 
@@ -745,8 +751,6 @@ def create_shows():
 
 @ app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-    # called to create new shows in the db, upon submitting new show listing form
-    # TODO: insert form data as a new Show record in the db, instead
     error = False
     submission = request.form
     try:
