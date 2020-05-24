@@ -402,7 +402,6 @@ def show_artist(artist_id):
 def edit_artist(artist_id):
     form = ArtistForm()
     artist = Artist.query.get(artist_id)
-    print(artist.genres)
     form.genres.data = artist.genres
     return render_template('forms/edit_artist.html', form=form, artist=artist)
 
@@ -476,7 +475,6 @@ def edit_venue_submission(venue_id):
         # on successful db insert, flash success
         flash('Venue ' + request.form['name'] + ' was successfully updated!')
     else:
-        print('error')
         flash('An error occurred. Venue ' +
               request.form['name'] + ' could not be updated.')
     return redirect(url_for('show_venue', venue_id=venue_id))
@@ -535,7 +533,6 @@ def shows():
     shows = Show.query.join(Venue, Show.venue_id == Venue.id).join(
         Artist, Artist.id == Show.artist_id).all()
     for show in shows:
-        print(show.venue.name)
         showData = {
             "venue_id": show.venue_id,
             "venue_name": show.venue.name,
