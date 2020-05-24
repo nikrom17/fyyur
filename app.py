@@ -558,8 +558,8 @@ def create_show_submission():
     submission = request.form
     try:
         show = Show()
-        show.venue = submission['venue_id']
-        show.artist = submission['artist_id']
+        show.venue_id = submission['venue_id']
+        show.artist_id = submission['artist_id']
         show.start_time = submission['start_time']
         db.session.add(show)
         db.session.commit()
