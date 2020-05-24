@@ -5,6 +5,8 @@
 from enum import Enum
 import json
 import dateutil.parser
+from datetime import datetime
+import pytz
 import babel
 from config import SQLALCHEMY_DATABASE_URI
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
@@ -186,8 +188,15 @@ def addShowsData():
             db.session.add(show)
         db.session.commit()
 
+
 # ---------------------------------------------------------------------------- #
-# Filters.
+# Globals
+# ---------------------------------------------------------------------------- #
+
+utc = pytz.UTC
+
+# ---------------------------------------------------------------------------- #
+# filters.
 # ---------------------------------------------------------------------------- #
 
 
@@ -356,7 +365,33 @@ def show_venue(venue_id):
     #     "past_shows_count": 1,
     #     "upcoming_shows_count": 1,
     # }
-    data = Venue.query.get(venue_id)
+    now = datetime.now()
+
+    venue = Venue.query.get(venue_id)
+    upcoming_shows = db.session.query(Show).join(
+        Venue, Show.venue_id == venue_id).filter(func.date(Show.start_time) > now).all()
+    past_shows = db.session.query(Show).join(
+        Venue, Show.venue_id == venue_id).filter(func.date(Show.start_time) < now).all()
+
+    data = {
+        "id": venue.id,
+        "name": venue.name,
+        "genres": venue.genres,
+        "address": venue.address,
+        "city": venue.city,
+        "state": venue.state,
+        "phone": venue.phone,
+        "website": venue.website,
+        "facebook_link": venue.facebook_link,
+        "seeking_talent": venue.seeking_talent,
+        "seeking_description": venue.seeking_description,
+        "image_link": venue.image_link,
+        "upcoming_shows": upcoming_shows,
+        "upcoming_shows_count": len(upcoming_shows),
+        "past_shows": past_shows,
+        "past_shows_count": len(past_shows)
+    }
+
     if data:
         return render_template('pages/show_venue.html', venue=data)
     else:
@@ -522,7 +557,31 @@ def show_artist(artist_id):
     #     "past_shows_count": 0,
     #     "upcoming_shows_count": 3,
     # }
-    data = Artist.query.get(artist_id)
+    now = datetime.now()
+
+    artist = Artist.query.get(artist_id)
+    upcoming_shows = db.session.query(Show).join(
+        Venue, Show.artist_id == artist_id).filter(func.date(Show.start_time) > now).all()
+    past_shows = db.session.query(Show).join(
+        Venue, Show.artist_id == artist_id).filter(func.date(Show.start_time) < now).all()
+
+    data = {
+        "id": artist.id,
+        "name": artist.name,
+        "genres": artist.genres,
+        "city": artist.city,
+        "state": artist.state,
+        "phone": artist.phone,
+        "website": artist.website,
+        "facebook_link": artist.facebook_link,
+        "seeking_venue": artist.seeking_venue,
+        "seeking_description": artist.seeking_description,
+        "image_link": artist.image_link,
+        "upcoming_shows": upcoming_shows,
+        "upcoming_shows_count": len(upcoming_shows),
+        "past_shows": past_shows,
+        "past_shows_count": len(past_shows)
+    }
     if data:
         return render_template('pages/show_artist.html', artist=data)
     else:
