@@ -70,17 +70,18 @@ class Venue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(120))
     city = db.Column(db.String(120))
-    facebook_link = db.Column(db.String(120))
+    facebook_link = db.Column(db.String(120), nullable=True)
     image_link = db.Column(db.String(500))
     genres = db.Column(db.ARRAY(db.String), default=[Genres.pop])
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
-    seeking_description = db.Column(db.String(500), nullable=True)
-    seeking_talent = db.Column(db.Boolean)
+    seeking_description = db.Column(
+        db.String(500), nullable=True, default='')
+    seeking_talent = db.Column(db.Boolean, nullable=True, default=False)
     state = db.Column(db.String(120))
     website = db.Column(db.String(500))
-    num_upcoming_shows = db.Column(db.Integer)
-    num_past_shows = db.Column(db.Integer)
+    num_upcoming_shows = db.Column(db.Integer, default=0)
+    num_past_shows = db.Column(db.Integer, default=0)
     shows = db.relationship('Show', backref='venue')
 
     def __repr__(self):
@@ -92,17 +93,17 @@ class Artist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(120))
-    facebook_link = db.Column(db.String(120))
+    facebook_link = db.Column(db.String(120), nullable=True)
     genres = db.Column(db.ARRAY(db.String), default=[Genres.pop])
     image_link = db.Column(db.String(500))
     name = db.Column(db.String)
     phone = db.Column(db.String(120))
     seeking_description = db.Column(db.String(500), nullable=True)
-    seeking_venue = db.Column(db.Boolean)
+    seeking_venue = db.Column(db.Boolean, nullable=True)
     state = db.Column(db.String(120))
     website = db.Column(db.String(500))
-    upcoming_shows_count = db.Column(db.Integer)
-    past_shows_count = db.Column(db.Integer)
+    upcoming_shows_count = db.Column(db.Integer, default=0)
+    past_shows_count = db.Column(db.Integer, default=0)
     shows = db.relationship('Show', backref='artist')
 
     def __repr__(self):
@@ -295,7 +296,7 @@ def create_venue_form():
 
 @ app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    error = False
+    errorFlag = False
     try:
         venue = Venue()
         submission = request.form
@@ -307,17 +308,17 @@ def create_venue_submission():
         venue.name = submission['name']
         venue.phone = submission['phone']
         venue.seeking_description = submission['seeking_description']
-        venue.seeking_talent = True if submission['seeking_talent'] == 'y' else False
+        venue.seeking_talent = True if 'seeking_talent' in submission else False
         venue.state = submission['state']
         venue.website = submission['website']
         db.session.add(venue)
         db.session.commit()
-    except:
-        error = True
+    except Exception as e:
+        errorFlag = True
         db.session.rollback()
     finally:
         db.session.close()
-    if not error:
+    if not errorFlag:
         # on successful db insert, flash success
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
     else:
@@ -408,7 +409,7 @@ def edit_artist(artist_id):
 
 @ app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-    error = False
+    errorFlag = False
     try:
         artist = Artist.query.get(artist_id)
         submission = request.form
@@ -420,12 +421,12 @@ def edit_artist_submission(artist_id):
         artist.state = submission['state']
         db.session.add(artist)
         db.session.commit()
-    except:
-        error = True
+    except Exception as e:
+        errorFlag = True
         db.session.rollback()
     finally:
         db.session.close()
-    if not error:
+    if not errorFlag:
         # on successful db insert, flash success
         flash('Artist ' + request.form['name'] + ' was successfully updated!')
     else:
@@ -453,7 +454,7 @@ def edit_venue(venue_id):
 @ app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
     # venue record with ID <venue_id> using the new attributes
-    error = False
+    errorFlag = False
     try:
         venue = Venue.query.get(venue_id)
         submission = request.form
@@ -466,12 +467,12 @@ def edit_venue_submission(venue_id):
         venue.state = submission['state']
         db.session.add(venue)
         db.session.commit()
-    except:
-        error = True
+    except Exception as e:
+        errorFlag = True
         db.session.rollback()
     finally:
         db.session.close()
-    if not error:
+    if not errorFlag:
         # on successful db insert, flash success
         flash('Venue ' + request.form['name'] + ' was successfully updated!')
     else:
@@ -492,7 +493,7 @@ def create_artist_form():
 @ app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
     # called upon submitting the new artist listing form
-    error = False
+    errorFlag = False
     try:
         artist = Artist()
         submission = request.form
@@ -503,17 +504,17 @@ def create_artist_submission():
         artist.name = submission['name']
         artist.phone = submission['phone']
         artist.seeking_description = submission['seeking_description']
-        artist.seeking_venue = True if submission['seeking_venue'] == 'y' else False
+        artist.seeking_venue = True if 'seeking_venue' in submission else False
         artist.state = submission['state']
         artist.website = submission['website']
         db.session.add(artist)
         db.session.commit()
-    except:
-        error = True
+    except Exception as e:
+        errorFlag = True
         db.session.rollback()
     finally:
         db.session.close()
-    if not error:
+    if not errorFlag:
         # on successful db insert, flash success
         flash('Artist ' + request.form['name'] + ' was successfully listed!')
     else:
@@ -554,7 +555,7 @@ def create_shows():
 
 @ app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-    error = False
+    errorFlag = False
     submission = request.form
     try:
         show = Show()
@@ -563,13 +564,13 @@ def create_show_submission():
         show.start_time = submission['start_time']
         db.session.add(show)
         db.session.commit()
-    except:
-        error = True
+    except Exception as e:
+        errorFlag = True
         db.session.rollback()
     finally:
         db.session.close()
 
-    if not error:
+    if not errorFlag:
         # on successful db insert, flash success
         flash('Show was successfully listed!')
     else:
